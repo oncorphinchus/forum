@@ -30,4 +30,4 @@ databases:
   - name: forum-db
     plan: free
     databaseName: login_system
-    ipAllowList: ["0.0.0.0/0"]  # Only allow internal connections 
+    ipAllowList: []  # Only allow internal connections from your Render services 
