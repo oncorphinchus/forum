@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # Web server with PHP
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: login_system_web
+    restart: always
+    ports:
+      - "8081:80"
+    volumes:
+      - ./:/var/www/html/
+      - ./uploads:/var/www/html/uploads
+    depends_on:
+      - db
+    networks:
+      - login_system_network
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=login_system
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+
+  # MySQL database
+  db:
+    image: mysql:8.0
+    container_name: login_system_db
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/01-database.sql
+      - ./topic_views.sql:/docker-entrypoint-initdb.d/02-topic_views.sql
+      - ./contact_messages.sql:/docker-entrypoint-initdb.d/03-contact_messages.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=login_system
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    networks:
+      - login_system_network
+      
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: login_system_phpmyadmin
+    restart: always
+    ports:
+      - "8082:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    depends_on:
+      - db
+    networks:
+      - login_system_network
+
+# Define the network
+networks:
+  login_system_network:
+    driver: bridge
+
+# Define volumes
+volumes:
+  mysql_data:
+    driver: local 

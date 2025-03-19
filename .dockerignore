@@ -1,0 +1,24 @@
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git files
+.git
+.gitignore
+
+# OS and Editor files
+.DS_Store
+*.swp
+*.swo
+.idea
+.vscode
+
+# Node.js
+node_modules
+npm-debug.log
+
+# Other
+README.md
+*.log
+*.md 

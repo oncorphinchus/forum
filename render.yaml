@@ -1,0 +1,33 @@
+services:
+  # The web service (PHP Forum Application)
+  - type: web
+    name: forum-app
+    env: docker
+    dockerfilePath: ./render.Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: MYSQL_HOST
+        fromDatabase:
+          name: forum-db
+          property: host
+      - key: MYSQL_USER
+        fromDatabase:
+          name: forum-db
+          property: user
+      - key: MYSQL_PASSWORD
+        fromDatabase:
+          name: forum-db
+          property: password
+      - key: MYSQL_DATABASE
+        fromDatabase:
+          name: forum-db
+          property: database
+
+databases:
+  # MySQL database
+  - name: forum-db
+    plan: free
+    databaseName: login_system
+    ipAllowList: []  # Only allow internal connections 

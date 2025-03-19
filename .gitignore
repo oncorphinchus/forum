@@ -1,0 +1,33 @@
+# Environment configuration
+config.original.php
+.env
+
+# Docker development files
+docker-compose.override.yml
+
+# User uploaded content
+/uploads/**/*
+!/uploads/.gitkeep
+!/uploads/avatars/.gitkeep
+
+# Dependencies
+/vendor/
+
+# Cache and temporary files
+*.log
+*.cache
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# Build and deployment directories
+/deployment/
+/dist/
+/node_modules/ 
