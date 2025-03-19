@@ -188,6 +188,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </button>
                     </div>
                 </form>
+                
+                <!-- Social Login Section -->
+                <div class="mt-4">
+                    <div class="text-center mb-3">
+                        <p class="mb-0">Or create an account with:</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="oauth_login.php?provider=google" class="btn btn-outline-danger btn-block mb-2">
+                                <i class="fab fa-google"></i> Google
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="oauth_login.php?provider=facebook" class="btn btn-outline-primary btn-block mb-2">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="oauth_login.php?provider=github" class="btn btn-outline-dark btn-block">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="oauth_login.php?provider=apple" class="btn btn-outline-secondary btn-block">
+                                <i class="fab fa-apple"></i> Apple
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-footer text-center bg-light">
                 <p class="mb-0">

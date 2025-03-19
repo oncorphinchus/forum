@@ -14,17 +14,21 @@ $row = $result->fetch_assoc();
 if ($row['table_count'] == 0) {
     echo "Initializing database...\n";
     
-    // Create users table
+    // Create users table with OAuth support
     $sql[] = "CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,
         email VARCHAR(100) NOT NULL UNIQUE,
-        password VARCHAR(255) NOT NULL,
+        password VARCHAR(255),
         avatar_url VARCHAR(255),
         bio TEXT,
         role ENUM('user', 'moderator', 'admin') DEFAULT 'user',
+        oauth_provider ENUM('local', 'google', 'facebook', 'github', 'apple') DEFAULT 'local',
+        oauth_id VARCHAR(255),
+        oauth_data TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX (oauth_provider, oauth_id)
     )";
 
     // Create categories table
@@ -130,5 +134,40 @@ if ($row['table_count'] == 0) {
     }
 } else {
     echo "Database already initialized.\n";
+    
+    // Check if we need to add OAuth columns to existing users table
+    $check_oauth_columns = "SELECT COUNT(*) as column_count FROM information_schema.columns 
+                         WHERE table_schema = '{$dbname}' 
+                         AND table_name = 'users' 
+                         AND column_name = 'oauth_provider'";
+    $result = $conn->query($check_oauth_columns);
+    $row = $result->fetch_assoc();
+    
+    if ($row['column_count'] == 0) {
+        echo "Updating users table with OAuth support...\n";
+        
+        // Add OAuth columns to existing users table
+        $update_sql[] = "ALTER TABLE users
+                        ADD COLUMN oauth_provider ENUM('local', 'google', 'facebook', 'github', 'apple') DEFAULT 'local',
+                        ADD COLUMN oauth_id VARCHAR(255),
+                        ADD COLUMN oauth_data TEXT,
+                        ADD INDEX (oauth_provider, oauth_id)";
+                        
+        // Execute updates
+        $success = true;
+        foreach ($update_sql as $query) {
+            if (!$conn->query($query)) {
+                echo "Error: " . $query . "<br>" . $conn->error . "<br>";
+                $success = false;
+                break;
+            }
+        }
+        
+        if ($success) {
+            echo "Users table updated successfully with OAuth support!\n";
+        } else {
+            echo "Error updating users table.\n";
+        }
+    }
 }
 ?> 
