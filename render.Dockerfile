@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_mysql pdo_pgsql \
     && a2enmod rewrite
 
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # Create upload directories
 RUN mkdir -p /var/www/html/uploads/avatars && \
     chmod -R 777 /var/www/html/uploads
@@ -22,6 +25,9 @@ WORKDIR /var/www/html
 
 # Copy application code
 COPY . /var/www/html/
+
+# Install PHP dependencies
+RUN composer install --no-interaction --no-dev --optimize-autoloader
 
 # Use PostgreSQL configuration for production
 COPY config.pgsql.php /var/www/html/config.php

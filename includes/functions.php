@@ -44,11 +44,9 @@ function get_user_role() {
     }
     global $conn;
     $stmt = $conn->prepare("SELECT role FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    return $user['role'];
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
+    return $user ? $user['role'] : null;
 }
 
 function is_admin() {

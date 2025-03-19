@@ -3,6 +3,6 @@
         "league/oauth2-google": "^4.0",
         "league/oauth2-facebook": "^2.0",
         "league/oauth2-github": "^3.0",
-        "patrickbussmann/oauth2-apple": "^1.0"
+        "patrickbussmann/oauth2-apple": "^0.2.4"
     }
 } 

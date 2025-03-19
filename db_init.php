@@ -1,5 +1,6 @@
 <?php
 // Database initialization script for first launch
+ob_start(); // Start output buffering to prevent headers already sent errors
 
 // Include database configuration
 require_once 'config.php';
@@ -126,15 +127,15 @@ try {
                 $conn->exec($query);
             }
             $conn->commit();
-            echo "Database initialized successfully!\n";
+            error_log("Database initialized successfully!");
         } catch (PDOException $e) {
             $conn->rollBack();
-            echo "Error: " . $e->getMessage() . "\n";
+            error_log("Error: " . $e->getMessage());
             $success = false;
         }
         
     } else {
-        echo "Database already initialized.\n";
+        error_log("Database already initialized.");
         
         // Check if we need to add OAuth columns to existing users table
         $check_oauth_columns = "SELECT COUNT(*) as column_count FROM information_schema.columns 
@@ -145,7 +146,7 @@ try {
         $row = $stmt->fetch();
         
         if ($row['column_count'] == 0) {
-            echo "Updating users table with OAuth support...\n";
+            error_log("Updating users table with OAuth support...");
             
             // Add OAuth columns to existing users table
             $update_sql[] = "ALTER TABLE users
@@ -162,15 +163,16 @@ try {
                     $conn->exec($query);
                 }
                 $conn->commit();
-                echo "Users table updated successfully with OAuth support!\n";
+                error_log("Users table updated successfully with OAuth support!");
             } catch (PDOException $e) {
                 $conn->rollBack();
-                echo "Error: " . $e->getMessage() . "\n";
+                error_log("Error: " . $e->getMessage());
                 $success = false;
             }
         }
     }
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    error_log("Error: " . $e->getMessage());
 }
+ob_end_clean(); // End output buffering without outputting
 ?> 

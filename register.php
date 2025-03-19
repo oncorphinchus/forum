@@ -61,38 +61,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if username already exists
     $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
+    $stmt->execute([$username]);
+    if ($stmt->rowCount() > 0) {
         $errors[] = "Username is already taken.";
     }
 
     // Check if email already exists
     $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
+    $stmt->execute([$email]);
+    if ($stmt->rowCount() > 0) {
         $errors[] = "Email is already registered.";
     }
 
+    // If no errors, create user
     if (empty($errors)) {
         // Hash password
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-        // Insert new user
-        $stmt = $conn->prepare("
-            INSERT INTO users (username, email, password, role, created_at) 
-            VALUES (?, ?, ?, 'user', NOW())
-        ");
-        $stmt->bind_param("sss", $username, $email, $password_hash);
-
-        if ($stmt->execute()) {
-            set_message('success', 'Registration successful! You can now login.');
-            header('Location: login.php');
-            exit();
-        } else {
-            $errors[] = "Error creating account. Please try again.";
-        }
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        
+        // Insert user
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, NOW())");
+        $stmt->execute([$username, $email, $hashed_password]);
+        
+        // Get the new user ID
+        $user_id = $conn->lastInsertId();
+        
+        // Log the user in
+        $_SESSION['user_id'] = $user_id;
+        $_SESSION['username'] = $username;
+        
+        // Create a session token
+        $token = bin2hex(random_bytes(32));
+        $stmt = $conn->prepare("INSERT INTO user_sessions (user_id, session_token, ip_address, user_agent) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$user_id, $token, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']]);
+        
+        // Set message and redirect
+        set_message('success', 'Registration successful! Welcome to our forum.');
+        header('Location: index.php');
+        exit();
     }
 }
 ?>
