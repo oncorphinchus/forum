@@ -36,7 +36,4 @@ define('BASE_URL', $protocol . '://' . $host . $base_path);
 // Start session if not already started
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
-}
-
-// Include database helper functions
-require_once __DIR__ . '/db_helpers.php'; 
+} 

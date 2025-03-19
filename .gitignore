@@ -1,33 +1,27 @@
-# Environment configuration
-config.original.php
+# Ignore environment files with real credentials
 .env
+.env.local
 
-# Docker development files
-docker-compose.override.yml
+# Ignore vendor directory
+/vendor/
 
-# User uploaded content
-/uploads/**/*
+# Ignore user uploads (except .gitkeep)
+/uploads/*
 !/uploads/.gitkeep
 !/uploads/avatars/.gitkeep
 
-# Dependencies
-/vendor/
-
-# Cache and temporary files
+# Ignore log files
 *.log
-*.cache
+
+# Ignore PHP error logs
+php_errors.log
+
+# Ignore system files
 .DS_Store
 Thumbs.db
 
-# IDE and editor files
+# Ignore editor files
 .idea/
 .vscode/
-*.sublime-project
-*.sublime-workspace
 *.swp
-*.swo
-
-# Build and deployment directories
-/deployment/
-/dist/
-/node_modules/ 
+*.swo 
