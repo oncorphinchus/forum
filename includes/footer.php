@@ -32,7 +32,10 @@
                             <li class="mb-2"><a href="<?php echo BASE_URL; ?>/index.php" class="hover-lift">Home</a></li>
                             <li class="mb-2"><a href="<?php echo BASE_URL; ?>/categories.php" class="hover-lift">Categories</a></li>
                             <li class="mb-2"><a href="<?php echo BASE_URL; ?>/new_topic.php" class="hover-lift">New Topic</a></li>
+                            <!-- Comment out Contact Us link -->
+                            <!--
                             <li class="mb-2"><a href="<?php echo BASE_URL; ?>/contact.php" class="hover-lift">Contact Us</a></li>
+                            -->
                         </ul>
                     </div>
                 </div>

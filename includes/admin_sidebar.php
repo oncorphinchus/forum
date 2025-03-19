@@ -31,21 +31,23 @@
                     Comments
                 </a>
             </li>
+            <!-- Comment out Contact Messages section -->
+            <!--
             <li class="nav-item">
                 <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'contact_messages.php' ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/contact_messages.php">
                     <i class="fas fa-envelope"></i>
                     Contact Messages
-                    <?php 
-                    // Show unread message count
+                    <?php
+                    // Get unread message count
                     $stmt = $conn->prepare("SELECT COUNT(*) FROM contact_messages WHERE is_read = FALSE");
                     $stmt->execute();
-                    $unread_count = $stmt->get_result()->fetch_row()[0];
-                    if ($unread_count > 0): 
-                    ?>
-                        <span class="badge bg-danger rounded-pill ms-2"><?php echo $unread_count; ?></span>
+                    $unread_count = $stmt->fetchColumn();
+                    if ($unread_count > 0): ?>
+                        <span class="badge badge-danger badge-counter"><?php echo $unread_count; ?></span>
                     <?php endif; ?>
                 </a>
             </li>
+            -->
             <li class="nav-item">
                 <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'topic_stats.php' ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/topic_stats.php">
                     <i class="fas fa-chart-line"></i>

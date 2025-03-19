@@ -54,11 +54,14 @@ require_once 'includes/functions.php';
                             </a>
                         </li>
                     <?php endif; ?>
+                    <!-- Comment out Contact Us link -->
+                    <!--
                     <li class="nav-item">
                         <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'contact.php' ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/contact.php">
                             <i class="fas fa-envelope me-1"></i> Contact Us
                         </a>
                     </li>
+                    -->
                 </ul>
                 <ul class="navbar-nav">
                     <?php if (is_logged_in()): ?>

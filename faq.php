@@ -73,7 +73,9 @@ $current_date = date("F j, Y");
                     
                     <div style="margin-bottom: 20px; background-color: #f8f9fa; padding: 20px; border-radius: 5px;">
                         <h3 style="color: #212529; font-size: 20px; margin-bottom: 10px;">How do I report inappropriate content?</h3>
-                        <p style="color: #212529;">If you come across content that violates our guidelines, please use the "Report" button located below each post or topic. Provide a brief explanation of why you're reporting the content, and our moderation team will review it promptly. You can also contact us directly through the <a href="<?php echo BASE_URL; ?>/contact.php" style="color: #4e73df;">Contact Us</a> page for serious violations.</p>
+                        <p style="color: #212529;">If you come across content that violates our guidelines, please use the "Report" button located below each post or topic. Provide a brief explanation of why you're reporting the content, and our moderation team will review it promptly. <!--
+                        <a href="<?php echo BASE_URL; ?>/contact.php" style="color: #4e73df;">Contact Us</a>
+                        --> Report Issue</p>
                     </div>
                 </div>
                 
@@ -96,7 +98,9 @@ $current_date = date("F j, Y");
                 <div style="margin-top: 40px; text-align: center;">
                     <h2 style="color: #4e73df; margin-bottom: 20px; font-size: 24px;">Still have questions?</h2>
                     <p style="color: #212529; margin-bottom: 20px;">If you couldn't find the answer to your question, please don't hesitate to contact us.</p>
+                    <!--
                     <a href="<?php echo BASE_URL; ?>/contact.php" style="display: inline-block; background-color: #4e73df; color: #ffffff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">Contact Support</a>
+                    -->
                 </div>
             </div>
         </div>

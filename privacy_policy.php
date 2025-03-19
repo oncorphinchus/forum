@@ -106,8 +106,11 @@ require_once 'includes/header.php';
                     <h4>10. Contact Us</h4>
                     <p>If you have any questions about this Privacy Policy, please contact us:</p>
                     <ul>
-                        <li>By email: [Your Contact Email]</li>
+                        <!-- Commented out Contact Us link -->
+                        <!--
                         <li>By visiting our contact page: <a href="contact.php">Contact Us</a></li>
+                        -->
+                        <li>By email: [Your Contact Email]</li>
                     </ul>
                 </section>
             </div>

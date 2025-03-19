@@ -28,6 +28,8 @@ $stats['comments'] = $result->fetch_assoc()['count'];
 $result = $conn->query("SELECT COUNT(*) as count FROM categories");
 $stats['categories'] = $result->fetch_assoc()['count'];
 
+// Commenting out contact message statistics
+/*
 // Total contact messages
 $result = $conn->query("SELECT COUNT(*) as count FROM contact_messages");
 $stats['contact_messages'] = $result->fetch_assoc()['count'];
@@ -35,6 +37,7 @@ $stats['contact_messages'] = $result->fetch_assoc()['count'];
 // Unread contact messages
 $result = $conn->query("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = FALSE");
 $stats['unread_messages'] = $result->fetch_assoc()['count'];
+*/
 
 // Recent registrations
 $stmt = $conn->prepare("
@@ -58,6 +61,8 @@ $stmt = $conn->prepare("
 $stmt->execute();
 $recent_topics = $stmt->get_result();
 
+// Commenting out recent contact messages section
+/*
 // Recent contact messages
 $stmt = $conn->prepare("
     SELECT cm.id, cm.name, cm.email, cm.subject, cm.created_at, cm.is_read
@@ -67,6 +72,7 @@ $stmt = $conn->prepare("
 ");
 $stmt->execute();
 $recent_messages = $stmt->get_result();
+*/
 ?>
 
 <div class="container-fluid">
@@ -154,6 +160,8 @@ $recent_messages = $stmt->get_result();
                     </div>
                 </div>
                 
+                <!-- Comment out Contact Messages card -->
+                <!--
                 <div class="col-md-3">
                     <div class="card text-white bg-danger mb-4">
                         <div class="card-body">
@@ -176,6 +184,7 @@ $recent_messages = $stmt->get_result();
                         </div>
                     </div>
                 </div>
+                -->
             </div>
 
             <div class="row">
@@ -257,7 +266,8 @@ $recent_messages = $stmt->get_result();
                     </div>
                 </div>
                 
-                <!-- Recent Contact Messages -->
+                <!-- Comment out Recent Contact Messages section -->
+                <!--
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-header">
@@ -307,6 +317,7 @@ $recent_messages = $stmt->get_result();
                         </div>
                     </div>
                 </div>
+                -->
             </div>
         </main>
     </div>

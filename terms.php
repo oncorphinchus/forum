@@ -122,7 +122,10 @@ require_once 'includes/header.php';
                     <p>For questions about these Terms of Service, please contact us:</p>
                     <ul>
                         <li>By email: [Your Contact Email]</li>
+                        <!-- Commented out Contact Us link -->
+                        <!--
                         <li>By visiting our contact page: <a href="contact.php">Contact Us</a></li>
+                        -->
                     </ul>
                 </section>
             </div>
