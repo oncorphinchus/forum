@@ -1,6 +1,6 @@
 FROM php:8.1-apache
 
-# Install PHP extensions and dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -8,15 +8,32 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_mysql \
+    && docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_mysql pdo_pgsql \
     && a2enmod rewrite
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Create upload directories
+RUN mkdir -p /var/www/html/uploads/avatars && \
+    chmod -R 777 /var/www/html/uploads
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy application code
+# Copy composer files first to leverage Docker cache
+COPY composer.json composer.lock* ./
+
+# Install dependencies
+RUN composer install --no-scripts --no-autoloader
+
+# Copy the rest of the application code
 COPY . /var/www/html/
+
+# Generate optimized autoloader
+RUN composer dump-autoload --optimize
 
 # Set permissions for Apache
 RUN chown -R www-data:www-data /var/www/html \

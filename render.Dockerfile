@@ -23,14 +23,20 @@ RUN mkdir -p /var/www/html/uploads/avatars && \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy application code
-COPY . /var/www/html/
+# Copy composer files first to leverage Docker cache
+COPY composer.json composer.lock* ./
 
-# Install PHP dependencies
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+# Install dependencies
+RUN composer install --no-scripts --no-autoloader --no-dev
+
+# Copy the rest of the application code
+COPY . /var/www/html/
 
 # Use PostgreSQL configuration for production
 COPY config.pgsql.php /var/www/html/config.php
+
+# Generate optimized autoloader
+RUN composer dump-autoload --optimize
 
 # Set permissions for Apache
 RUN chown -R www-data:www-data /var/www/html \

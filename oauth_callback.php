@@ -147,19 +147,16 @@ try {
     
     // Check if user exists in database
     $stmt = $conn->prepare("SELECT * FROM users WHERE oauth_provider = ? AND oauth_id = ?");
-    $stmt->bind_param("ss", $provider, $oauthId);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$provider, $oauthId]);
+    $user = $stmt->fetch();
     
-    if ($result->num_rows > 0) {
+    if ($user) {
         // User exists, log them in
-        $user = $result->fetch_assoc();
         
         // Update user data if necessary
         if (!empty($avatar) && empty($user['avatar_url'])) {
             $stmt = $conn->prepare("UPDATE users SET avatar_url = ? WHERE id = ?");
-            $stmt->bind_param("si", $avatar, $user['id']);
-            $stmt->execute();
+            $stmt->execute([$avatar, $user['id']]);
         }
         
         // Log the user in
@@ -171,19 +168,16 @@ try {
         // Check if email already exists
         if (!empty($email)) {
             $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
             
-            if ($result->num_rows > 0) {
+            if ($user) {
                 // Email exists but with different auth method
-                $user = $result->fetch_assoc();
                 
                 // Link this OAuth account to the existing user
                 $stmt = $conn->prepare("UPDATE users SET oauth_provider = ?, oauth_id = ?, oauth_data = ? WHERE id = ?");
                 $oauthData = json_encode($userData);
-                $stmt->bind_param("sssi", $provider, $oauthId, $oauthData, $user['id']);
-                $stmt->execute();
+                $stmt->execute([$provider, $oauthId, $oauthData, $user['id']]);
                 
                 // Log the user in
                 login_user($user['id']);
@@ -204,11 +198,10 @@ try {
         $counter = 1;
         while (true) {
             $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            $stmt->execute([$username]);
+            $result = $stmt->fetch();
             
-            if ($result->num_rows == 0) {
+            if (!$result) {
                 break;
             }
             
@@ -219,12 +212,11 @@ try {
         // Insert the new user
         $stmt = $conn->prepare("INSERT INTO users (username, email, oauth_provider, oauth_id, oauth_data, avatar_url) VALUES (?, ?, ?, ?, ?, ?)");
         $oauthData = json_encode($userData);
-        $stmt->bind_param("ssssss", $username, $email, $provider, $oauthId, $oauthData, $avatar);
-        $stmt->execute();
+        $stmt->execute([$username, $email, $provider, $oauthId, $oauthData, $avatar]);
         
-        if ($stmt->affected_rows > 0) {
+        if ($stmt->rowCount() > 0) {
             // Get the new user's ID
-            $userId = $conn->insert_id;
+            $userId = $conn->lastInsertId();
             
             // Log the user in
             login_user($userId);

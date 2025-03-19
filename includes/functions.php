@@ -62,9 +62,8 @@ function is_moderator() {
 function get_user_by_id($user_id) {
     global $conn;
     $stmt = $conn->prepare("SELECT id, username, email, avatar_url, bio, role, created_at FROM users WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_assoc();
+    $stmt->execute([$user_id]);
+    return $stmt->fetch();
 }
 
 function get_topic_by_id($topic_id) {
@@ -76,9 +75,8 @@ function get_topic_by_id($topic_id) {
         JOIN categories c ON t.category_id = c.id 
         WHERE t.id = ?
     ");
-    $stmt->bind_param("i", $topic_id);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_assoc();
+    $stmt->execute([$topic_id]);
+    return $stmt->fetch();
 }
 
 // Pagination helper
@@ -145,12 +143,11 @@ function track_topic_view($topic_id) {
         AND session_id = ? 
         AND view_date = ?
     ");
-    $stmt->bind_param("iissss", $topic_id, $user_id, $user_id, $ip_address, $session_id, $current_date);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$topic_id, $user_id, $user_id, $ip_address, $session_id, $current_date]);
+    $result = $stmt->rowCount();
     
     // If view already exists for today, don't count it again
-    if ($result->num_rows > 0) {
+    if ($result > 0) {
         return false;
     }
     
@@ -159,15 +156,13 @@ function track_topic_view($topic_id) {
         INSERT INTO topic_views (topic_id, user_id, ip_address, session_id, view_date, viewed_at)
         VALUES (?, ?, ?, ?, ?, ?)
     ");
-    $stmt->bind_param("iissss", $topic_id, $user_id, $ip_address, $session_id, $current_date, $current_datetime);
-    $success = $stmt->execute();
+    $success = $stmt->execute([$topic_id, $user_id, $ip_address, $session_id, $current_date, $current_datetime]);
     
     // If successfully inserted, update the topic's view count
     if ($success) {
         // Update the view count in the topics table
         $stmt = $conn->prepare("UPDATE topics SET views = views + 1 WHERE id = ?");
-        $stmt->bind_param("i", $topic_id);
-        $stmt->execute();
+        $stmt->execute([$topic_id]);
         return true;
     }
     
@@ -184,11 +179,10 @@ function get_topic_view_count($topic_id) {
     global $conn;
     
     $stmt = $conn->prepare("SELECT views FROM topics WHERE id = ?");
-    $stmt->bind_param("i", $topic_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$topic_id]);
+    $row = $stmt->fetch();
     
-    if ($row = $result->fetch_assoc()) {
+    if ($row) {
         return $row['views'];
     }
     
@@ -210,13 +204,48 @@ function get_topic_unique_viewers($topic_id) {
         FROM topic_views
         WHERE topic_id = ?
     ");
-    $stmt->bind_param("i", $topic_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$topic_id]);
+    $row = $stmt->fetch();
     
-    if ($row = $result->fetch_assoc()) {
+    if ($row) {
         return $row['unique_viewers'];
     }
     
     return 0;
+}
+
+/**
+ * Log a user in
+ * 
+ * @param int $user_id The ID of the user to log in
+ * @return void
+ */
+function login_user($user_id) {
+    global $conn;
+    
+    // Get user data
+    $stmt = $conn->prepare("SELECT id, username FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+    
+    if ($user) {
+        // Set session variables
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        
+        // Generate a session token
+        $token = bin2hex(random_bytes(32));
+        
+        // Save session to database
+        $stmt = $conn->prepare("INSERT INTO user_sessions (user_id, session_token, ip_address, user_agent) VALUES (?, ?, ?, ?)");
+        $stmt->execute([
+            $user['id'],
+            $token,
+            $_SERVER['REMOTE_ADDR'],
+            $_SERVER['HTTP_USER_AGENT']
+        ]);
+        
+        // Set cookie for persistent login (30 days)
+        setcookie('session_token', $token, time() + (86400 * 30), '/');
+    }
 } 
