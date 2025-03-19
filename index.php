@@ -1,4 +1,9 @@
 <?php
+// Check if database needs to be initialized (do this before anything else)
+if (file_exists('db_init.php')) {
+    include_once 'db_init.php';
+}
+
 $page_title = "Home";
 require_once 'includes/header.php';
 
