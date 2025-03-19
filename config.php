@@ -1,11 +1,11 @@
 <?php
 // Database configuration for PostgreSQL
 try {
-    // Get database credentials from environment variables
-    $host = getenv('DATABASE_URL') ?: "dpg-cvdfoqofnakc73dji1h0-a"; // Updated hostname
-    $username = getenv('DATABASE_USER') ?: "login_system_mzct_user"; // Updated username
-    $password = getenv('DATABASE_PASSWORD') ?: "27cSz4yMXbFiiRKYwcoOKq0T5la891wm"; // Updated password
-    $dbname = getenv('DATABASE_NAME') ?: "login_system_mzct"; // Updated database name
+    // Get database credentials from Render environment variables (MySQL-style variable names)
+    $host = getenv('MYSQL_HOST') ?: "dpg-cvdfoqofnakc73dji1h0-a"; // Use Render's MYSQL_HOST variable
+    $username = getenv('MYSQL_USER') ?: "login_system_mzct_user"; // Use Render's MYSQL_USER variable
+    $password = getenv('MYSQL_PASSWORD') ?: "27cSz4yMXbFiiRKYwcoOKq0T5la891wm"; // Use Render's MYSQL_PASSWORD variable
+    $dbname = getenv('MYSQL_DATABASE') ?: "login_system_mzct"; // Use Render's MYSQL_DATABASE variable
     $port = getenv('DATABASE_PORT') ?: 5432; // PostgreSQL default port
     
     // Create PDO connection string for PostgreSQL
